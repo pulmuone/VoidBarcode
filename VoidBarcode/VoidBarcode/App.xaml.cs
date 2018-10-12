@@ -1,4 +1,5 @@
 ﻿using System;
+using VoidBarcode.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -11,7 +12,8 @@ namespace VoidBarcode
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            //여러 페이지 할경우 NavigationPage으로.
+            MainPage = new MainView();
         }
 
         protected override void OnStart()
