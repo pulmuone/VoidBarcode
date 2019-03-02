@@ -80,8 +80,8 @@ namespace VoidBarcode.Droid
                         Intent intent = new Intent(Intent.ActionInstallPackage);
                         //intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
                         intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
-                        intent.SetFlags(ActivityFlags.NewTask);
                         intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                        intent.SetFlags(ActivityFlags.NewTask);
                         StartActivity(intent);
                     }
                     else

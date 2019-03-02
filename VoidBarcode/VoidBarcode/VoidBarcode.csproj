@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>2019.3.2.14</AssemblyVersion>
-    <FileVersion>2019.3.2.14</FileVersion>
+    <AssemblyVersion>2019.3.2.15</AssemblyVersion>
+    <FileVersion>2019.3.2.15</FileVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
