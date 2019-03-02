@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.V4.Content;
 using Android.Widget;
 using Java.IO;
 using System;
@@ -42,18 +43,20 @@ namespace VoidBarcode.Droid
             File file = new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).ToString());
             IFilenameFilter filter = new AutoUpdateFileFilter();
             File[] files = file.ListFiles(filter);
-
-            foreach (var item in files)
+            if (files != null && files.Length > 0)
             {
-                if (item.IsFile)
+                foreach (var item in files)
                 {
-                    if (item.Name.ToString().StartsWith("com.gwise.voidbarcode"))
+                    if (item.IsFile)
                     {
-                        using (File fileDel = new File(item.ToString()))
+                        if (item.Name.ToString().StartsWith("com.gwise.voidbarcode"))
                         {
-                            if (fileDel.Exists())
+                            using (File fileDel = new File(item.ToString()))
                             {
-                                fileDel.Delete();
+                                if (fileDel.Exists())
+                                {
+                                    fileDel.Delete();
+                                }
                             }
                         }
                     }
@@ -72,10 +75,29 @@ namespace VoidBarcode.Droid
                 webClient.DownloadFileAsync(url, Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk");
                 webClient.DownloadFileCompleted += (s, e) =>
                 {
-                    Intent intent = new Intent(Intent.ActionView);
-                    intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                    intent.AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 버튼이 보인다.
-                    StartActivity(intent);
+                    if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
+                    {
+                        Intent intent = new Intent(Intent.ActionInstallPackage);
+                        //intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
+                        intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
+                        intent.SetFlags(ActivityFlags.NewTask);
+                        intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                        StartActivity(intent);
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(Intent.ActionView);
+                        intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
+                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        StartActivity(intent);
+                    }
+
+                    //var apkUri = FileProvider.GetUriForFile(this, this.ApplicationContext.PackageName + ".provider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk"));
+                    //Intent intent = new Intent(Intent.ActionInstallPackage);
+                    //intent.SetData(apkUri);
+                    //intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                    //intent.SetFlags(ActivityFlags.NewTask); // AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 버튼이 보인다.
+                    //StartActivity(intent);
 
                     OnUpdateCompleted?.Invoke();
                     this.Finish();
@@ -97,11 +119,11 @@ namespace VoidBarcode.Droid
         private void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
         {
             // Displays the operation identifier, and the transfer progress.
-            //System.Console.WriteLine("{0}    downloaded {1} of {2} bytes. {3} % complete...",
-            //     (string)e.UserState,
-            //     e.BytesReceived,
-            //     e.TotalBytesToReceive,
-            //     e.ProgressPercentage);
+            System.Console.WriteLine("{0}    downloaded {1} of {2} bytes. {3} % complete...",
+                 (string)e.UserState,
+                 e.BytesReceived,
+                 e.TotalBytesToReceive,
+                 e.ProgressPercentage);
 
             int length = Convert.ToInt32(e.TotalBytesToReceive.ToString());
             int prog = Convert.ToInt32(e.BytesReceived.ToString());

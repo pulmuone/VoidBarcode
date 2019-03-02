@@ -6,7 +6,7 @@ namespace VoidBarcode
 {
     public class GlobalSetting
     {
-        private string DefaultEndpoint = "http://172.34.34.156:30553";
+        private string DefaultEndpoint = "http://192.168.0.106:8080";
 
         private string _baseEndpoint = string.Empty;
         private static readonly GlobalSetting _instance = new GlobalSetting();
@@ -14,7 +14,7 @@ namespace VoidBarcode
         public GlobalSetting()
         {
 #if DEBUG
-            DefaultEndpoint = "http://172.34.34.156:30553";
+            DefaultEndpoint = "http://192.168.0.106:8080";
 #endif
             AuthToken = "INSERT AUTHENTICATION TOKEN";
             BaseEndpoint = DefaultEndpoint;
