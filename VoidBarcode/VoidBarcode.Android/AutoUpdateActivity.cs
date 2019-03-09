@@ -33,10 +33,9 @@ namespace VoidBarcode.Droid
             FileDelete();
 
             //CheckUpdate();
+            
             var url = new System.Uri(string.Format(@"{0}{1}", GlobalSetting.Instance.MOBILEEndpoint.ToString(), @"/com.gwise.voidbarcode.apk"));
-            //ThreadPool.QueueUserWorkItem(async o => await DownloadFileAsync(url));
-            //RunOnUiThread(async()=> await DownloadFileAsync(url));
-
+            
             Task task = Task.Factory.StartNew(async() =>
             {
                 await DownloadFileAsync(url);
@@ -48,14 +47,14 @@ namespace VoidBarcode.Droid
                         Intent intent = new Intent(Intent.ActionInstallPackage);
                         intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
                         //intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
-                        intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                        intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
                         StartActivity(intent);
                     }
                     else
                     {
                         Intent intent = new Intent(Intent.ActionView);
                         intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        intent.AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
                         StartActivity(intent);
                     }
                 }, TaskCreationOptions.AttachedToParent);
@@ -63,7 +62,7 @@ namespace VoidBarcode.Droid
                 var third = Task.Factory.StartNew(() =>
                 {
                     OnUpdateCompleted?.Invoke();
-                    this.Finish();
+                    //this.Finish();
                 }, TaskCreationOptions.AttachedToParent);
             });
 
@@ -102,57 +101,56 @@ namespace VoidBarcode.Droid
             }
         }
 
-        //private void CheckUpdate()
-        //{
-        //    var ad = new AlertDialog.Builder(this).Create();
-        //    try
-        //    {
-        //        var webClient = new WebClient();
-        //        var url = new System.Uri(string.Format(@"{0}{1}", GlobalSetting.Instance.MOBILEEndpoint.ToString(), @"/com.gwise.voidbarcode.apk"));
-        //        webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
-        //        webClient.DownloadFileAsync(url, Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk");
-        //        webClient.DownloadFileCompleted += (s, e) =>
-        //        {
-        //            if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
-        //            {
-        //                Intent intent = new Intent(Intent.ActionInstallPackage);
-        //                //intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-        //                intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
-        //                intent.SetFlags(ActivityFlags.GrantReadUriPermission);
-        //                //intent.SetFlags(ActivityFlags.NewTask);
-        //                StartActivity(intent);
-        //            }
-        //            else
-        //            {
-        //                Intent intent = new Intent(Intent.ActionView);
-        //                intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")  ), "application/vnd.android.package-archive");
-        //                intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
-        //                StartActivity(intent);
-        //            }
+        private void CheckUpdate()
+        {
+            var ad = new AlertDialog.Builder(this).Create();
+            try
+            {
+                var webClient = new WebClient();
+                var url = new System.Uri(string.Format(@"{0}{1}", GlobalSetting.Instance.MOBILEEndpoint.ToString(), @"/com.gwise.voidbarcode.apk"));
+                webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
+                webClient.DownloadFileAsync(url, Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk");
+                webClient.DownloadFileCompleted += (s, e) =>
+                {
+                    if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
+                    {
+                        Intent intent = new Intent(Intent.ActionInstallPackage);
+                        intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
+                        //intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
+                        intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                        StartActivity(intent);
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(Intent.ActionView);
+                        intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
+                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        StartActivity(intent);
+                    }
 
-        //            //var apkUri = FileProvider.GetUriForFile(this, this.ApplicationContext.PackageName + ".provider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk"));
-        //            //Intent intent = new Intent(Intent.ActionInstallPackage);
-        //            //intent.SetData(apkUri);
-        //            //intent.SetFlags(ActivityFlags.GrantReadUriPermission);
-        //            //intent.SetFlags(ActivityFlags.NewTask); // AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 버튼이 보인다.
-        //            //StartActivity(intent);
+                    //var apkUri = FileProvider.GetUriForFile(this, this.ApplicationContext.PackageName + ".provider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk"));
+                    //Intent intent = new Intent(Intent.ActionInstallPackage);
+                    //intent.SetData(apkUri);
+                    //intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                    //intent.SetFlags(ActivityFlags.NewTask); // AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 버튼이 보인다.
+                    //StartActivity(intent);
 
-        //            OnUpdateCompleted?.Invoke();
-        //            this.Finish();
-        //        };
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        ad = new AlertDialog.Builder(this).Create();
-        //        ad.SetTitle("INFO");
-        //        ad.SetMessage(ex.Message);
-        //        ad.SetCanceledOnTouchOutside(true);
-        //        ad.Show();
-        //    }
-        //    finally
-        //    {
-        //    }
-        //}
+                    OnUpdateCompleted?.Invoke();
+                    this.Finish();
+                };
+            }
+            catch (System.Exception ex)
+            {
+                ad = new AlertDialog.Builder(this).Create();
+                ad.SetTitle("INFO");
+                ad.SetMessage(ex.Message);
+                ad.SetCanceledOnTouchOutside(true);
+                ad.Show();
+            }
+            finally
+            {
+            }
+        }
 
 
         public async Task DownloadFileAsync(Uri url)
