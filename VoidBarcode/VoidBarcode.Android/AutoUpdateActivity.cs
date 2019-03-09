@@ -6,6 +6,9 @@ using Android.Widget;
 using Java.IO;
 using System;
 using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace VoidBarcode.Droid
 {
@@ -29,7 +32,42 @@ namespace VoidBarcode.Droid
 
             FileDelete();
 
-            CheckUpdate();
+            //CheckUpdate();
+            var url = new System.Uri(string.Format(@"{0}{1}", GlobalSetting.Instance.MOBILEEndpoint.ToString(), @"/com.gwise.voidbarcode.apk"));
+            //ThreadPool.QueueUserWorkItem(async o => await DownloadFileAsync(url));
+            //RunOnUiThread(async()=> await DownloadFileAsync(url));
+
+            Task task = Task.Factory.StartNew(async() =>
+            {
+                await DownloadFileAsync(url);
+
+                var child = Task.Factory.StartNew(() =>
+                {
+                    if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
+                    {
+                        Intent intent = new Intent(Intent.ActionInstallPackage);
+                        intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
+                        //intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
+                        intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                        StartActivity(intent);
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(Intent.ActionView);
+                        intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
+                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        StartActivity(intent);
+                    }
+                }, TaskCreationOptions.AttachedToParent);
+
+                var third = Task.Factory.StartNew(() =>
+                {
+                    OnUpdateCompleted?.Invoke();
+                    this.Finish();
+                }, TaskCreationOptions.AttachedToParent);
+            });
+
+            task.Wait();
         }
 
         protected override void OnDestroy()
@@ -64,56 +102,133 @@ namespace VoidBarcode.Droid
             }
         }
 
-        private void CheckUpdate()
+        //private void CheckUpdate()
+        //{
+        //    var ad = new AlertDialog.Builder(this).Create();
+        //    try
+        //    {
+        //        var webClient = new WebClient();
+        //        var url = new System.Uri(string.Format(@"{0}{1}", GlobalSetting.Instance.MOBILEEndpoint.ToString(), @"/com.gwise.voidbarcode.apk"));
+        //        webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
+        //        webClient.DownloadFileAsync(url, Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk");
+        //        webClient.DownloadFileCompleted += (s, e) =>
+        //        {
+        //            if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
+        //            {
+        //                Intent intent = new Intent(Intent.ActionInstallPackage);
+        //                //intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
+        //                intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
+        //                intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+        //                //intent.SetFlags(ActivityFlags.NewTask);
+        //                StartActivity(intent);
+        //            }
+        //            else
+        //            {
+        //                Intent intent = new Intent(Intent.ActionView);
+        //                intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")  ), "application/vnd.android.package-archive");
+        //                intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+        //                StartActivity(intent);
+        //            }
+
+        //            //var apkUri = FileProvider.GetUriForFile(this, this.ApplicationContext.PackageName + ".provider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk"));
+        //            //Intent intent = new Intent(Intent.ActionInstallPackage);
+        //            //intent.SetData(apkUri);
+        //            //intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+        //            //intent.SetFlags(ActivityFlags.NewTask); // AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 버튼이 보인다.
+        //            //StartActivity(intent);
+
+        //            OnUpdateCompleted?.Invoke();
+        //            this.Finish();
+        //        };
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        ad = new AlertDialog.Builder(this).Create();
+        //        ad.SetTitle("INFO");
+        //        ad.SetMessage(ex.Message);
+        //        ad.SetCanceledOnTouchOutside(true);
+        //        ad.Show();
+        //    }
+        //    finally
+        //    {
+        //    }
+        //}
+
+
+        public async Task DownloadFileAsync(Uri url)
         {
-            var ad = new AlertDialog.Builder(this).Create();
+            progressBar.Max = 100;
+
+            var _client = new HttpClient();
             try
             {
-                var webClient = new WebClient();
-                var url = new System.Uri(string.Format(@"{0}{1}", GlobalSetting.Instance.MOBILEEndpoint.ToString(), @"/com.gwise.voidbarcode.apk"));
-                webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
-                webClient.DownloadFileAsync(url, Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk");
-                webClient.DownloadFileCompleted += (s, e) =>
+                // Step 1 : Get call
+                var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+                if (!response.IsSuccessStatusCode)
                 {
-                    if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
-                    {
-                        Intent intent = new Intent(Intent.ActionInstallPackage);
-                        //intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
-                        intent.SetFlags(ActivityFlags.GrantReadUriPermission);
-                        intent.SetFlags(ActivityFlags.NewTask);
-                        StartActivity(intent);
-                    }
-                    else
-                    {
-                        Intent intent = new Intent(Intent.ActionView);
-                        intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
-                        StartActivity(intent);
-                    }
+                    throw new Exception(string.Format("The request returned with HTTP status code {0}", response.StatusCode));
+                }
 
-                    //var apkUri = FileProvider.GetUriForFile(this, this.ApplicationContext.PackageName + ".provider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk"));
-                    //Intent intent = new Intent(Intent.ActionInstallPackage);
-                    //intent.SetData(apkUri);
-                    //intent.SetFlags(ActivityFlags.GrantReadUriPermission);
-                    //intent.SetFlags(ActivityFlags.NewTask); // AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 버튼이 보인다.
-                    //StartActivity(intent);
+                // Step 2 : Filename
+                //var fileName = response.Content.Headers?.ContentDisposition?.FileName ?? "tmp.zip";
 
-                    OnUpdateCompleted?.Invoke();
-                    this.Finish();
-                };
+                // Step 3 : Get total of data
+                var totalData = response.Content.Headers.ContentLength.GetValueOrDefault(-1L);
+                var canSendProgress = totalData != -1L;
+
+                // Step 4 : Get total of data
+                var filePath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk";
+
+                // Step 5 : Download data
+                using (var fileStream = OpenStream(filePath))
+                {
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        var totalRead = 0L;
+                        var buffer = new byte[4095];
+                        var isMoreDataToRead = true;
+
+                        do
+                        {
+                            //token.ThrowIfCancellationRequested();
+
+                            var read = await stream.ReadAsync(buffer, 0, buffer.Length);
+
+                            if (read == 0)
+                            {
+                                isMoreDataToRead = false;
+                            }
+                            else
+                            {
+                                // Write data on disk.
+                                await fileStream.WriteAsync(buffer, 0, read);
+
+                                totalRead += read;
+
+                                if (canSendProgress)
+                                {
+                                    //progress.Report((totalRead * 1d) / (totalData * 1d) * 100);
+                                    progressBar.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
+                                }
+                            }
+                        } while (isMoreDataToRead);
+                    }
+                }
+
+                //OnUpdateCompleted?.Invoke();
+                //this.Finish();
             }
-            catch (System.Exception ex)
+            catch (Exception e)
             {
-                ad = new AlertDialog.Builder(this).Create();
-                ad.SetTitle("INFO");
-                ad.SetMessage(ex.Message);
-                ad.SetCanceledOnTouchOutside(true);
-                ad.Show();
+                // Manage the exception as you need here.
+                System.Diagnostics.Debug.WriteLine(e.ToString());
             }
-            finally
-            {
-            }
+        }
+
+        private System.IO.Stream OpenStream(string path)
+        {
+            return new System.IO.FileStream(path, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.None, 4095);
         }
 
         private void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)

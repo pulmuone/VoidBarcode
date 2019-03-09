@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoidBarcode.Android", "Void
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoidBarcode.iOS", "VoidBarcode\VoidBarcode.iOS\VoidBarcode.iOS.csproj", "{E410465B-6A1F-4D3C-B793-278932FD0941}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoidBarcode", "VoidBarcode\VoidBarcode\VoidBarcode.csproj", "{EE8AD2BC-8FAF-4FEB-A00D-CB4BFAFCE5CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoidBarcode", "VoidBarcode\VoidBarcode\VoidBarcode.csproj", "{EE8AD2BC-8FAF-4FEB-A00D-CB4BFAFCE5CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
