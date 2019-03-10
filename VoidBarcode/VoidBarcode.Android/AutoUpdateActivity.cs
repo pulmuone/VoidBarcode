@@ -30,6 +30,9 @@ namespace VoidBarcode.Droid
             progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar1);
             progressBar2 = FindViewById<ProgressBar>(Resource.Id.progressBar2);
 
+            progressBar.Max = 100;
+            progressBar2.Max = 100;
+
             FileDelete();
 
             //CheckUpdate();
@@ -67,6 +70,7 @@ namespace VoidBarcode.Droid
             });
 
             task.Wait();
+            
         }
 
         protected override void OnDestroy()
@@ -117,26 +121,19 @@ namespace VoidBarcode.Droid
                         Intent intent = new Intent(Intent.ActionInstallPackage);
                         intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
                         //intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
-                        intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                        intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
                         StartActivity(intent);
                     }
                     else
                     {
                         Intent intent = new Intent(Intent.ActionView);
                         intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        intent.AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
                         StartActivity(intent);
                     }
 
-                    //var apkUri = FileProvider.GetUriForFile(this, this.ApplicationContext.PackageName + ".provider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk"));
-                    //Intent intent = new Intent(Intent.ActionInstallPackage);
-                    //intent.SetData(apkUri);
-                    //intent.SetFlags(ActivityFlags.GrantReadUriPermission);
-                    //intent.SetFlags(ActivityFlags.NewTask); // AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 버튼이 보인다.
-                    //StartActivity(intent);
-
                     OnUpdateCompleted?.Invoke();
-                    this.Finish();
+                    //this.Finish();
                 };
             }
             catch (System.Exception ex)
@@ -155,8 +152,6 @@ namespace VoidBarcode.Droid
 
         public async Task DownloadFileAsync(Uri url)
         {
-            progressBar.Max = 100;
-
             var _client = new HttpClient();
             try
             {
@@ -169,7 +164,7 @@ namespace VoidBarcode.Droid
                 }
 
                 // Step 2 : Filename
-                //var fileName = response.Content.Headers?.ContentDisposition?.FileName ?? "tmp.zip";
+                //var fileName = response.Content.Headers?.ContentDisposition?.FileName ?? "XXX.zip";
 
                 // Step 3 : Get total of data
                 var totalData = response.Content.Headers.ContentLength.GetValueOrDefault(-1L);
@@ -190,9 +185,7 @@ namespace VoidBarcode.Droid
                         do
                         {
                             //token.ThrowIfCancellationRequested();
-
                             var read = await stream.ReadAsync(buffer, 0, buffer.Length);
-
                             if (read == 0)
                             {
                                 isMoreDataToRead = false;
@@ -208,6 +201,7 @@ namespace VoidBarcode.Droid
                                 {
                                     //progress.Report((totalRead * 1d) / (totalData * 1d) * 100);
                                     progressBar.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
+                                    progressBar2.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
                                 }
                             }
                         } while (isMoreDataToRead);
@@ -244,11 +238,12 @@ namespace VoidBarcode.Droid
 
             try
             {
-                progressBar.Max = 100;
                 progressBar.Progress = perc;
-
-                progressBar2.Max = 100;
+                progressBar.TooltipText = perc.ToString();
+                //RunOnUiThread(() => progressBar.Progress = perc);
                 progressBar2.Progress = perc;
+                progressBar2.TooltipText = perc.ToString();
+                //RunOnUiThread(() => progressBar2.Progress = perc);
             }
             finally
             {
