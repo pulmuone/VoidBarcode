@@ -200,8 +200,10 @@ namespace VoidBarcode.Droid
                                 if (canSendProgress)
                                 {
                                     //progress.Report((totalRead * 1d) / (totalData * 1d) * 100);
-                                    progressBar.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
-                                    progressBar2.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
+                                    //progressBar.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
+                                    progressBar.SetProgress(Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100), true);
+                                    //progressBar2.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
+                                    progressBar2.SetProgress(Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100), true);
                                 }
                             }
                         } while (isMoreDataToRead);
