@@ -65,7 +65,7 @@ namespace VoidBarcode.Droid
                 var third = Task.Factory.StartNew(() =>
                 {
                     OnUpdateCompleted?.Invoke();
-                    //this.Finish();
+                    this.Finish();
                 }, TaskCreationOptions.AttachedToParent);
             });
 
@@ -133,7 +133,7 @@ namespace VoidBarcode.Droid
                     }
 
                     OnUpdateCompleted?.Invoke();
-                    //this.Finish();
+                    this.Finish();
                 };
             }
             catch (System.Exception ex)

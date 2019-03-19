@@ -17,23 +17,23 @@ namespace VoidBarcode.Views
 		{
 			InitializeComponent ();
 
-            var assembly = typeof(App).GetTypeInfo().Assembly;
-            var assemblyName = new AssemblyName(assembly.FullName);
+			var assembly = typeof(App).GetTypeInfo().Assembly;
+			var assemblyName = new AssemblyName(assembly.FullName);
 
-            this.lblVersion.Text = "Ver " + assemblyName.Version.ToString();
+			this.lblVersion.Text = "Ver " + assemblyName.Version.ToString();
 
-        }
+		}
 
-        //async void는 await안됨.
-        //MVVM할때 코드 변경할 예정
-        private async void btnLogin_Clicked(object sender, EventArgs e)
-        {
-            if (await VersionCheck.Instance.IsUpdate())
-            {
-                await VersionCheck.Instance.UpdateCheck();
-                IsEnabled = true;
-                return;
-            }
-        }
-    }
+		//async void는 await안됨.
+		//MVVM할때 코드 변경할 예정
+		private async void btnLogin_Clicked(object sender, EventArgs e)
+		{
+			if (await VersionCheck.Instance.IsUpdate())
+			{
+				await VersionCheck.Instance.UpdateCheck();
+				IsEnabled = true;
+				return;
+			}
+		}
+	}
 }

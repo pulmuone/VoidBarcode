@@ -31,20 +31,20 @@ namespace VoidBarcode.Services.AutoUpdate
             }
         }
 
-        public async Task<bool> IsNetworkAccess()
-        {
-            if (Connectivity.Profiles.Contains(ConnectionProfile.WiFi))
-            {
-                return true;
-            }
-            else
-            {
-                await Application.Current.MainPage.DisplayAlert("WiFi 연결 오류", "WiFi 연결 후\n다시 처리해 주세요.", "OK");
+        //public async Task<bool> IsNetworkAccess()
+        //{
+        //    if (Connectivity.Profiles.Contains(ConnectionProfile.WiFi))
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        await Application.Current.MainPage.DisplayAlert("WiFi 연결 오류", "WiFi 연결 후\n다시 처리해 주세요.", "OK");
 
-                // Active Wi-Fi connection.
-                return false;
-            }
-        }
+        //        // Active Wi-Fi connection.
+        //        return false;
+        //    }
+        //}
 
         public async Task<bool> IsUpdate()
         {
