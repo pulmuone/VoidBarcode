@@ -49,7 +49,6 @@ namespace VoidBarcode.Droid
                     {
                         Intent intent = new Intent(Intent.ActionInstallPackage);
                         intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        //intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
                         intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
                         StartActivity(intent);
                     }
@@ -105,6 +104,10 @@ namespace VoidBarcode.Droid
             }
         }
 
+        /// <summary>
+        /// 사용하지 않음. 
+        /// DownloadProgressChanged  이벤트 작동 안함.
+        /// </summary>
         private void CheckUpdate()
         {
             var ad = new AlertDialog.Builder(this).Create();
@@ -120,15 +123,14 @@ namespace VoidBarcode.Droid
                     {
                         Intent intent = new Intent(Intent.ActionInstallPackage);
                         intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        //intent.SetData(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")));
-                        intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
+                        intent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
                         StartActivity(intent);
                     }
                     else
                     {
                         Intent intent = new Intent(Intent.ActionView);
                         intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        intent.AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
                         StartActivity(intent);
                     }
 
@@ -155,7 +157,6 @@ namespace VoidBarcode.Droid
             var _client = new HttpClient();
             try
             {
-                // Step 1 : Get call
                 var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
                 if (!response.IsSuccessStatusCode)
@@ -163,17 +164,11 @@ namespace VoidBarcode.Droid
                     throw new Exception(string.Format("The request returned with HTTP status code {0}", response.StatusCode));
                 }
 
-                // Step 2 : Filename
-                //var fileName = response.Content.Headers?.ContentDisposition?.FileName ?? "XXX.zip";
-
-                // Step 3 : Get total of data
                 var totalData = response.Content.Headers.ContentLength.GetValueOrDefault(-1L);
                 var canSendProgress = totalData != -1L;
 
-                // Step 4 : Get total of data
                 var filePath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk";
 
-                // Step 5 : Download data
                 using (var fileStream = OpenStream(filePath))
                 {
                     using (var stream = await response.Content.ReadAsStreamAsync())
@@ -199,23 +194,16 @@ namespace VoidBarcode.Droid
 
                                 if (canSendProgress)
                                 {
-                                    //progress.Report((totalRead * 1d) / (totalData * 1d) * 100);
-                                    //progressBar.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
                                     progressBar.SetProgress(Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100), true);
-                                    //progressBar2.Progress = Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100);
                                     progressBar2.SetProgress(Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100), true);
                                 }
                             }
                         } while (isMoreDataToRead);
                     }
                 }
-
-                //OnUpdateCompleted?.Invoke();
-                //this.Finish();
             }
             catch (Exception e)
             {
-                // Manage the exception as you need here.
                 System.Diagnostics.Debug.WriteLine(e.ToString());
             }
         }
@@ -227,7 +215,6 @@ namespace VoidBarcode.Droid
 
         private void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
         {
-            // Displays the operation identifier, and the transfer progress.
             System.Console.WriteLine("{0}    downloaded {1} of {2} bytes. {3} % complete...",
                  (string)e.UserState,
                  e.BytesReceived,
