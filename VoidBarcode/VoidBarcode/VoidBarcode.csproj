@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>2019.3.20.41</AssemblyVersion>
-    <FileVersion>2019.3.20.41</FileVersion>
+    <AssemblyVersion>2019.3.20.45</AssemblyVersion>
+    <FileVersion>2019.3.20.45</FileVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="3.0.0-preview3.19128.7" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
-    <PackageReference Include="Xamarin.Forms" Version="3.5.0.169047" />
+    <PackageReference Include="Xamarin.Forms" Version="3.6.0.264807" />
   </ItemGroup>
 
   <ItemGroup>

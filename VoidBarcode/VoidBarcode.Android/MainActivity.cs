@@ -24,22 +24,26 @@ namespace VoidBarcode.Droid
         {
             base.OnStart();
 
-            List<string> permissions = new List<string>();
-
-            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) != (int)Permission.Granted)
+            //https://developer.android.com/guide/topics/security/permissions#normal-dangerous
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             {
-                permissions.Add(Manifest.Permission.WriteExternalStorage);
-            }
+                List<string> permissions = new List<string>();
 
-            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.Camera) != (int)Permission.Granted)
-            {
-                permissions.Add(Manifest.Permission.Camera);
-            }
+                if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) != (int)Permission.Granted)
+                {
+                    permissions.Add(Manifest.Permission.WriteExternalStorage);
+                }
+
+                if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.Camera) != (int)Permission.Granted)
+                {
+                    permissions.Add(Manifest.Permission.Camera);
+                }
 
 
-            if (permissions.Count > 0)
-            {
-                ActivityCompat.RequestPermissions(this, permissions.ToArray(), 1);
+                if (permissions.Count > 0)
+                {
+                    ActivityCompat.RequestPermissions(this, permissions.ToArray(), 1);
+                }
             }
         }
     }

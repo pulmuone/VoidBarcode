@@ -49,14 +49,14 @@ namespace VoidBarcode.Droid
                     {
                         Intent intent = new Intent(Intent.ActionInstallPackage);
                         intent.SetDataAndType(FileProvider.GetUriForFile(this.ApplicationContext, "com.gwise.voidbarcode.fileprovider", new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
+                        intent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
                         StartActivity(intent);
                     }
                     else
                     {
                         Intent intent = new Intent(Intent.ActionView);
                         intent.SetDataAndType(Android.Net.Uri.FromFile(new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + "/com.gwise.voidbarcode.apk")), "application/vnd.android.package-archive");
-                        intent.AddFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
                         StartActivity(intent);
                     }
                 }, TaskCreationOptions.AttachedToParent);
@@ -68,8 +68,7 @@ namespace VoidBarcode.Droid
                 }, TaskCreationOptions.AttachedToParent);
             });
 
-            task.Wait();
-            
+            task.Wait();            
         }
 
         protected override void OnDestroy()
