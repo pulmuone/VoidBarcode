@@ -6,7 +6,7 @@ namespace VoidBarcode
 {
     public class GlobalSetting
     {
-        private string DefaultEndpoint = "https://pulmuone.github.io/firebase";
+        private string DefaultEndpoint = " ";
         //private string DefaultEndpoint = "http://172.28.200.104:8080";
 
         private string _baseEndpoint = string.Empty;

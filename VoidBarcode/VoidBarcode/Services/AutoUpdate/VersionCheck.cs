@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Crashes;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -108,6 +110,13 @@ namespace VoidBarcode.Services.AutoUpdate
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+
+                var properties = new Dictionary<string, string>
+                {
+                    {"BaseHttpService", "SendRequestAsync" },
+                    {"UserID", "지현명"}
+                };
+                Crashes.TrackError(ex, properties);
             }
 
             return versionServer;

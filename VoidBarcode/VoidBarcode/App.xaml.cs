@@ -1,6 +1,9 @@
 ﻿using VoidBarcode.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace VoidBarcode
@@ -15,24 +18,9 @@ namespace VoidBarcode
             MainPage = new MainView();
         }
 
-        protected async override void OnStart()
+        protected override void OnStart()
         {
-            // Handle when your app starts
-
-            //var status = PermissionStatus.Unknown;
-            //status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera);
-
-            //if (status != PermissionStatus.Granted)
-            //{
-            //    await Utils.CheckPermissions(Permission.Camera);
-            //}
-
-            //status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
-
-            //if (status != PermissionStatus.Granted)
-            //{
-            //    status = await Utils.CheckPermissions(Permission.Storage);
-            //}
+             AppCenter.Start("android=525c2b00-d035-4983-8855-70319a2cd2b5;" + "uwp={Your UWP App secret here};" + "ios={Your iOS App secret here}", typeof(Analytics), typeof(Crashes));
         }
 
         protected override void OnSleep()
