@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Analytics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -28,7 +29,9 @@ namespace VoidBarcode.Views
 		//MVVM할때 코드 변경할 예정
 		private async void btnLogin_Clicked(object sender, EventArgs e)
 		{
-			if (await VersionCheck.Instance.IsUpdate())
+            Analytics.TrackEvent("btnLogin_Clicked");
+
+            if (await VersionCheck.Instance.IsUpdate())
 			{
 				await VersionCheck.Instance.UpdateCheck();
 				IsEnabled = true;
