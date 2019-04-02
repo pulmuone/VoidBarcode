@@ -82,6 +82,7 @@ namespace VoidBarcode.Droid
             File file = new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).ToString());
             IFilenameFilter filter = new AutoUpdateFileFilter();
             File[] files = file.ListFiles(filter);
+
             if (files != null && files.Length > 0)
             {
                 foreach (var item in files)

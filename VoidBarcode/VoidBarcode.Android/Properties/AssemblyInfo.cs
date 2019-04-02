@@ -30,4 +30,3 @@ using Android.App;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 // Add some common permissions, these can be removed if not needed
-
