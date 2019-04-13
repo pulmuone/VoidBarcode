@@ -18,7 +18,8 @@ namespace VoidBarcode.Droid
         public static event Action OnUpdateCompleted;
 
         private ProgressBar progressBar;
-        private ProgressBar progressBar2;
+        //private ProgressBar progressBar2;
+        private TextView textView1;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,10 +29,12 @@ namespace VoidBarcode.Droid
 
             // Create your application here            
             progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar1);
-            progressBar2 = FindViewById<ProgressBar>(Resource.Id.progressBar2);
+            //progressBar2 = FindViewById<ProgressBar>(Resource.Id.progressBar2);
+            textView1 = FindViewById<TextView>(Resource.Id.textView1);
 
             progressBar.Max = 100;
-            progressBar2.Max = 100;
+            textView1.Text = "0 %";
+            //progressBar2.Max = 100;
 
             FileDelete();
 
@@ -195,7 +198,9 @@ namespace VoidBarcode.Droid
                                 if (canSendProgress)
                                 {
                                     progressBar.SetProgress(Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100), true);
-                                    progressBar2.SetProgress(Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100), true);
+                                    textView1.Text = string.Format("{0} %", Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100));
+                                    //RunOnUiThread(() => textView1.Text = string.Format("{0} %", Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100)));
+                                    //progressBar2.SetProgress(Convert.ToInt32((totalRead * 1d) / (totalData * 1d) * 100), true);
                                 }
                             }
                         } while (isMoreDataToRead);
@@ -230,8 +235,8 @@ namespace VoidBarcode.Droid
                 progressBar.Progress = perc;
                 progressBar.TooltipText = perc.ToString();
                 //RunOnUiThread(() => progressBar.Progress = perc);
-                progressBar2.Progress = perc;
-                progressBar2.TooltipText = perc.ToString();
+                //progressBar2.Progress = perc;
+                //progressBar2.TooltipText = perc.ToString();
                 //RunOnUiThread(() => progressBar2.Progress = perc);
             }
             finally

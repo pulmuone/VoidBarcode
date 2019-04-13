@@ -6994,9 +6994,6 @@ namespace VoidBarcode.Droid
 			// aapt resource value: 0x7f0a009d
 			public const int progressBar1 = 2131361949;
 			
-			// aapt resource value: 0x7f0a009e
-			public const int progressBar2 = 2131361950;
-			
 			// aapt resource value: 0x7f0a0006
 			public const int progress_circular = 2131361798;
 			
@@ -7170,6 +7167,9 @@ namespace VoidBarcode.Droid
 			
 			// aapt resource value: 0x7f0a005a
 			public const int textStart = 2131361882;
+			
+			// aapt resource value: 0x7f0a009e
+			public const int textView1 = 2131361950;
 			
 			// aapt resource value: 0x7f0a00b1
 			public const int text_input_password_toggle = 2131361969;

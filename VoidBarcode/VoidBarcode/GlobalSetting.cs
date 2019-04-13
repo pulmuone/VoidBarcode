@@ -6,7 +6,7 @@ namespace VoidBarcode
 {
     public class GlobalSetting
     {
-        private string DefaultEndpoint = "http://172.28.200.46:8080";
+        private string DefaultEndpoint = "https://pulmuone.github.io/firebase"; //full주소 쓰자
         //private string DefaultEndpoint = "http://172.28.200.104:8080";
 
         private string _baseEndpoint = string.Empty;
@@ -47,10 +47,7 @@ namespace VoidBarcode
 
         private void UpdateEndpoint(string baseEndpoint)
         {
-            MOBILEEndpoint = $"{baseEndpoint}/PostgresqlWebApp"; //내부 테스트
-            //MOBILEEndpoint = $"{baseEndpoint}";  //외부 테스트
-            //MobileGetEndpoint = $"{baseEndpoint}//MobileGet";
-            //MobileSetEndpoint = $"{baseEndpoint}//MobileSet";
+            MOBILEEndpoint = $"{baseEndpoint}";
         }
     }
 }
