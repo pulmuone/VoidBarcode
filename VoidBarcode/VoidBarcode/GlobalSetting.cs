@@ -6,8 +6,9 @@ namespace VoidBarcode
 {
     public class GlobalSetting
     {
-        private string DefaultEndpoint = "https://pulmuone.github.io/firebase"; //full주소 쓰자
-        //private string DefaultEndpoint = "http://172.28.200.104:8080";
+        //private string DefaultEndpoint = "https://pulmuone.github.io/firebase"; //full주소 쓰자
+        private string DefaultEndpoint = "http://192.168.0.106:8080/app"; //full주소 쓰자
+        //private string DefaultEndpoint = "http://192.168.0.106:8080";
 
         private string _baseEndpoint = string.Empty;
         private static readonly GlobalSetting _instance = new GlobalSetting();
@@ -16,7 +17,7 @@ namespace VoidBarcode
         {
 #if DEBUG
             //DefaultEndpoint = "https://pulmuone.github.io/firebase";
-            DefaultEndpoint = "http://172.28.200.46:8080";
+            DefaultEndpoint = "http://192.168.0.106:8080/app";
 #endif
             AuthToken = "INSERT AUTHENTICATION TOKEN";
             BaseEndpoint = DefaultEndpoint;
