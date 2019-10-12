@@ -29,6 +29,7 @@ namespace VoidBarcode.Droid
 
             progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar1);
             textView1 = FindViewById<TextView>(Resource.Id.textView1);
+            
 
             progressBar.Max = 100;
             textView1.Text = "0 %";
@@ -47,6 +48,7 @@ namespace VoidBarcode.Droid
                 {
                     if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
                     {
+                        //화면이 없는 서비스에서 Activity를 띄울려면 ActivityFlags.NewTask 를 해야 한다.
                         Intent intent = new Intent(Intent.ActionInstallPackage);
                         intent.SetDataAndType(
                                                 FileProvider.GetUriForFile(
@@ -54,7 +56,7 @@ namespace VoidBarcode.Droid
                                                         string.Format("{0}{1}", Application.Context.PackageName, ".fileprovider"), 
                                                         new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + string.Format("{0}{1}{2}", "/", Application.Context.PackageName, ".apk"))), 
                                                 "application/vnd.android.package-archive");
-                        intent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
+                        intent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop);
                         StartActivity(intent);
                     }
                     else
@@ -64,7 +66,7 @@ namespace VoidBarcode.Droid
                                                 Android.Net.Uri.FromFile(
                                                     new File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) + string.Format("{0}{1}{2}", "/", Application.Context.PackageName, ".apk")))
                                             , "application/vnd.android.package-archive");
-                        intent.SetFlags(ActivityFlags.NewTask); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
                         StartActivity(intent);
                     }
                 }, TaskCreationOptions.AttachedToParent);

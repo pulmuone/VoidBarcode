@@ -24,23 +24,7 @@ namespace VoidBarcode.Droid
         protected override void OnStart()
         {
             base.OnStart();
-
-            
-            //'출처를 알 수 없는 앱'는 아래 코드로 알아 올 수 있습니다.nResult 가 1이면  '출처를 알 수 없는 앱'이 활성화 되어 있는 상태 입니다.
-            //bool unknownSource = false;
-            //if ((int)Build.VERSION.SdkInt < 17)
-            //{
-            //    unknownSource = Android.Provider.Settings.Secure.GetInt(ContentResolver, Android.Provider.Settings.Secure.InstallNonMarketApps, 0) == 1;
-            //}
-            //else
-            //{
-            //    unknownSource = Android.Provider.Settings.Global.GetInt(ContentResolver, Android.Provider.Settings.Global.InstallNonMarketApps, 0) == 1;
-            //}
-
-            //unknownSource = Android.Provider.Settings.Secure.GetInt(ContentResolver, Android.Provider.Settings.Secure.InstallNonMarketApps) == 1;
-
-            //Intent intent = new Intent(Android.Provider.Settings.ActionManageUnknownAppSources);
-            //StartActivity(intent);
+                       
 
             //https://developer.android.com/guide/topics/security/permissions#normal-dangerous
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
