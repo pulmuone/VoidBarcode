@@ -28,8 +28,7 @@ namespace VoidBarcode.Droid
             SetContentView(Resource.Layout.AutoUpdateLayout);
 
             progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar1);
-            textView1 = FindViewById<TextView>(Resource.Id.textView1);
-            
+            textView1 = FindViewById<TextView>(Resource.Id.textView1);            
 
             progressBar.Max = 100;
             textView1.Text = "0 %";

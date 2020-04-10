@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="2019.4.20.3" package="com.gwise.voidbarcode" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="12" android:versionName="9.0" package="com.gwise.voidbarcode" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="28" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -8,7 +8,7 @@
 	<uses-permission android:name="android.permission.INSTALL_PACKAGES" />
 	<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 	<application android:label="VoidBarcode" android:networkSecurityConfig="@xml/network_security_config">
-		<provider android:name="android.support.v4.content.FileProvider" android:authorities="com.gwise.voidbarcode.fileprovider" android:exported="false" android:grantUriPermissions="true">
+		<provider android:name="android.support.v4.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
 		</provider>
 	</application>

@@ -4,7 +4,9 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.V4.App;
+using Plugin.Permissions;
 using System.Collections.Generic;
 
 namespace VoidBarcode.Droid
@@ -23,8 +25,7 @@ namespace VoidBarcode.Droid
 
         protected override void OnStart()
         {
-            base.OnStart();
-                       
+            base.OnStart();                       
 
             //https://developer.android.com/guide/topics/security/permissions#normal-dangerous
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
@@ -47,6 +48,12 @@ namespace VoidBarcode.Droid
                     ActivityCompat.RequestPermissions(this, permissions.ToArray(), 1);
                 }
             }
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+        {
+            PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 }
