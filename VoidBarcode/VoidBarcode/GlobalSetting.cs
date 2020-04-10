@@ -17,7 +17,7 @@ namespace VoidBarcode
         {
 #if DEBUG
             //DefaultEndpoint = "https://pulmuone.github.io/firebase";
-            DefaultEndpoint = "http://192.168.0.106:8080/app";
+            DefaultEndpoint = "http://172.34.34.144:8080/xamarin";
 #endif
             AuthToken = "INSERT AUTHENTICATION TOKEN";
             BaseEndpoint = DefaultEndpoint;
