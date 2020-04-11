@@ -52,8 +52,8 @@ namespace VoidBarcode.Droid
             request.SetDescription("File Downloading...");
             request.SetAllowedNetworkTypes(DownloadNetwork.Wifi | DownloadNetwork.Mobile);
             request.SetNotificationVisibility(DownloadVisibility.Visible);
-            request.SetAllowedOverMetered(true);
-            request.SetAllowedOverRoaming(true);
+            request.SetAllowedOverMetered(true); //모바일 네트쿼크
+            request.SetAllowedOverRoaming(true); //로밍
 
             Java.IO.File path = this.GetExternalFilesDir(Android.OS.Environment.DirectoryDownloads);
             request.SetDestinationUri(Android.Net.Uri.FromFile(new Java.IO.File(path, string.Format("{0}{1}", Application.Context.PackageName, ".apk"))));
