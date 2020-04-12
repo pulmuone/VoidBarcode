@@ -110,7 +110,6 @@ namespace VoidBarcode.Droid
                 {
                     Intent intent = new Intent(Intent.ActionView);
                     intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop);
-                    intent.PutExtra(Intent.ExtraNotUnknownSource, true);
 
                     var apkUri = Android.Support.V4.Content.FileProvider.GetUriForFile(
                                         this.ApplicationContext,
@@ -125,7 +124,7 @@ namespace VoidBarcode.Droid
                     Intent intent = new Intent(Intent.ActionView);
                     intent.SetDataAndType(Android.Net.Uri.FromFile(new Java.IO.File(path, string.Format("{0}{1}", Application.Context.PackageName, ".apk")))
                                         , "application/vnd.android.package-archive");
-                    intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
                     StartActivity(intent);
                 }
 
