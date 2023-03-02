@@ -58,9 +58,12 @@ namespace VoidBarcode.Droid
             {
                 List<string> permissions = new List<string>();
 
-                if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) != (int)Permission.Granted)
+                if(Build.VERSION.SdkInt <= BuildVersionCodes.SV2)
                 {
-                    permissions.Add(Manifest.Permission.WriteExternalStorage);
+                    if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) != (int)Permission.Granted)
+                    {
+                        permissions.Add(Manifest.Permission.WriteExternalStorage);
+                    }
                 }
 
                 if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.Camera) != (int)Permission.Granted)

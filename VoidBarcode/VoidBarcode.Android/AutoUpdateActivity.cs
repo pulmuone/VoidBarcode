@@ -60,7 +60,7 @@ namespace VoidBarcode.Droid
 
             downloadId = manager.Enqueue(request);
 
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 for (; ; )
                 {
@@ -73,19 +73,27 @@ namespace VoidBarcode.Droid
                         var total = cursor.GetDouble(cursor.GetColumnIndex(DownloadManager.ColumnTotalSizeBytes));
                         RunOnUiThread(() =>
                         {
-                            progressBar.SetProgress(System.Convert.ToInt32(soFar / total * 100), true);
+                            if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
+                            {
+                                progressBar.SetProgress(System.Convert.ToInt32(soFar / total * 100), true);
+                            }
+                            else
+                            {
+                                progressBar.Progress = System.Convert.ToInt32(soFar / total * 100);
+                            }
+
                             textView1.Text = string.Format("{0} %", Convert.ToInt32(soFar / total * 100));
                         });
-                        System.Console.WriteLine(soFar.ToString());
+
+                        System.Console.WriteLine(String.Format("==> {0} {1}", total.ToString(), soFar.ToString()));
 
                         if (soFar.Equals(total))
                         {
                             break;
                         }
                     }
-                    Thread.Sleep(500);
+                    await Task.Delay(200);
                 }
-
             });
         }
 
