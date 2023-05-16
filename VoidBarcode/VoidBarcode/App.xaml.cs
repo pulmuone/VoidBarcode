@@ -4,6 +4,7 @@ using Xamarin.Forms.Xaml;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Xamarin.Essentials;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace VoidBarcode
@@ -13,6 +14,8 @@ namespace VoidBarcode
         public App()
         {
             InitializeComponent();
+
+            VersionTracking.Track();
 
             //여러 페이지 할경우 NavigationPage으로.
             MainPage = new MainView();
