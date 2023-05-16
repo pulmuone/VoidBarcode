@@ -6,7 +6,6 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.App;
-using Plugin.Permissions;
 using System.Collections.Generic;
 
 namespace VoidBarcode.Droid
@@ -14,6 +13,12 @@ namespace VoidBarcode.Droid
     [Activity(Label = "VoidBarcode", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        static string[] PERMISSIONS = {
+            Manifest.Permission.ReadExternalStorage,
+            Manifest.Permission.WriteExternalStorage
+            //Manifest.Permission.Camera
+        };
+
         readonly int REQUEST_INSTALL_PERMISSION = 10;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -54,34 +59,15 @@ namespace VoidBarcode.Droid
             //base.OnStart();                       
 
             //https://developer.android.com/guide/topics/security/permissions#normal-dangerous
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M) //23이상부터
             {
-                List<string> permissions = new List<string>();
-
-                if(Build.VERSION.SdkInt <= BuildVersionCodes.SV2)
-                {
-                    if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) != (int)Permission.Granted)
-                    {
-                        permissions.Add(Manifest.Permission.WriteExternalStorage);
-                    }
-                }
-
-                if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.Camera) != (int)Permission.Granted)
-                {
-                    permissions.Add(Manifest.Permission.Camera);
-                }
-
-
-                if (permissions.Count > 0)
-                {
-                    ActivityCompat.RequestPermissions(this, permissions.ToArray(), 1);
-                }
+                ActivityCompat.RequestPermissions(this, PERMISSIONS, 0);
             }
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
-            PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }

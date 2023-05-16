@@ -18,7 +18,7 @@ namespace VoidBarcode.Services.AutoUpdate
         Version versionServer;
         Version versionClient;
 
-        string url = string.Format(@"{0}{1}", GlobalSetting.Instance.MOBILEEndpoint.ToString(), @"/version.html");
+        string url = string.Format(@"{0}{1}", GlobalSetting.Instance.MOBILEEndpoint.ToString(), @"/version.txt");
 
         private VersionCheck()
         {
@@ -82,9 +82,10 @@ namespace VoidBarcode.Services.AutoUpdate
         /// <returns></returns>
         private Version GetVersionClient()
         {
-            var assembly = typeof(App).GetTypeInfo().Assembly;
-            var assemblyName = new AssemblyName(assembly.FullName);
-            versionClient = assemblyName.Version;
+            //var assembly = typeof(App).GetTypeInfo().Assembly;
+            //var assemblyName = new AssemblyName(assembly.FullName);
+            //versionClient = assemblyName.Version;
+            versionClient = new Version(VersionTracking.CurrentVersion);
 
             return versionClient;
         }
@@ -114,7 +115,7 @@ namespace VoidBarcode.Services.AutoUpdate
                 var properties = new Dictionary<string, string>
                 {
                     {"BaseHttpService", "SendRequestAsync" },
-                    {"UserID", "지현명"}
+                    {"UserID", "admin"}
                 };
                 Crashes.TrackError(ex, properties);
             }

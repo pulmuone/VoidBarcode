@@ -25,7 +25,6 @@ namespace VoidBarcode.Views
 
 		}
 
-		//async void는 await안됨.
 		//MVVM할때 코드 변경할 예정
 		private async void btnLogin_Clicked(object sender, EventArgs e)
 		{

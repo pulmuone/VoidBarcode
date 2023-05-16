@@ -111,37 +111,44 @@ namespace VoidBarcode.Droid
 
         private void Receiver_DownloadCompleted()
         {
-            Java.IO.File path = this.GetExternalFilesDir(Android.OS.Environment.DirectoryDownloads);
-            try
+            Task.Run(async () =>
             {
-                if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
+                await Task.Delay(500);
+                Java.IO.File path = this.GetExternalFilesDir(Android.OS.Environment.DirectoryDownloads);
+                try
                 {
-                    Intent intent = new Intent(Intent.ActionView);
-                    intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop);
+                    if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.N)
+                    {
+                        Intent intent = new Intent(Intent.ActionView);
+                        intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop);
 
-                    var apkUri = Android.Support.V4.Content.FileProvider.GetUriForFile(
-                                        this.ApplicationContext,
-                                        string.Format("{0}{1}", Application.Context.PackageName, ".fileprovider"),
-                                        new Java.IO.File(path, string.Format("{0}{1}", Application.Context.PackageName, ".apk")));
+                        var apkUri = AndroidX.Core.Content.FileProvider.GetUriForFile(
+                                            this.ApplicationContext,
+                                            string.Format("{0}{1}", Application.Context.PackageName, ".fileprovider"),
+                                            new Java.IO.File(path, string.Format("{0}{1}", Application.Context.PackageName, ".apk")));
 
-                    intent.SetDataAndType(apkUri, this.ContentResolver.GetType(apkUri));
-                    StartActivity(intent);
+                        intent.SetDataAndType(apkUri, this.ContentResolver.GetType(apkUri));
+                        StartActivity(intent);
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(Intent.ActionView);
+                        intent.SetDataAndType(Android.Net.Uri.FromFile(new Java.IO.File(path, string.Format("{0}{1}", Application.Context.PackageName, ".apk")))
+                                            , "application/vnd.android.package-archive");
+                        intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
+                        StartActivity(intent);
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    Intent intent = new Intent(Intent.ActionView);
-                    intent.SetDataAndType(Android.Net.Uri.FromFile(new Java.IO.File(path, string.Format("{0}{1}", Application.Context.PackageName, ".apk")))
-                                        , "application/vnd.android.package-archive");
-                    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ClearTop); // ActivityFlags.NewTask 이 옵션을 지정해 주어야 업데이트 완료 후에 [열기]라는 화면이 나온다.
-                    StartActivity(intent);
+                    System.Console.WriteLine(e.Message);
                 }
-
-                this.Finish();
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine(e.Message);
-            }
+                finally
+                {
+                    await Task.Delay(500);
+                    this.Finish();
+                }
+            });
         }
 
         protected override void OnPause()
